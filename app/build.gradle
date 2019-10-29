@@ -1,0 +1,71 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "org.tensorflow.lite.examples.classification"
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    aaptOptions {
+        noCompress "tflite"
+    }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
+
+    packagingOptions {
+        exclude 'META-INF/*'
+        exclude 'META-INF/NOTICE' // will not include NOTICE file
+        exclude 'META-INF/LICENSE' // will not include LICENSE file
+        exclude 'META-INF/INDEX.LIST' // will not include INDEX.LIST file
+    }
+}
+
+// Download default models; if you wish to use your own models then
+// place them in the "assets" directory and comment out this line.
+//apply from: 'download.gradle'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.coordinatorlayout:coordinatorlayout:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
+
+    //litepal数据库依赖
+    implementation 'org.litepal.android:java:3.0.0'
+
+    //cardview依赖
+    implementation 'androidx.cardview:cardview'
+
+    implementation 'com.orhanobut:logger:2.2.0'
+
+    // Build off of nightly TensorFlow Lite
+    implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
+    implementation 'org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly'
+    // Use local TensorFlow library
+    // implementation 'org.tensorflow:tensorflow-lite-local:0.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+
+    //以下与tensorflow serving服务相关
+    // https://mvnrepository.com/artifact/io.netty/netty-tcnative-boringssl-static
+    implementation group: 'io.netty', name: 'netty-tcnative-boringssl-static', version: '2.0.26.Final'
+
+    // https://mvnrepository.com/artifact/com.yesup.oss/tensorflow-client
+    implementation group: 'com.yesup.oss', name: 'tensorflow-client', version: '1.4-2'
+
+    // https://mvnrepository.com/artifact/net.coobird/thumbnailator
+    implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.8'
+    // https://mvnrepository.com/artifact/io.grpc/grpc-netty
+    implementation group: 'io.grpc', name: 'grpc-netty', version: '1.24.0'
+
+}

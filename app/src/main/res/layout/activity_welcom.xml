@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".WelcomActivity"
+    android:background="#87CEFA"
+    >
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="90dp"
+        android:gravity="center"
+        android:text="BeeInsight"
+        android:textColor="@android:color/white"
+        android:textSize="50dp"
+        android:textStyle="bold"
+        android:typeface="monospace"
+        />
+
+    <ImageView
+        android:id="@+id/img_logo"
+        android:layout_width="129dp"
+        android:layout_height="110dp"
+        android:layout_below="@+id/title"
+        android:layout_centerInParent="true"
+        android:src="@drawable/ic_launcher_my" />
+
+    <TextView
+        android:id="@+id/c1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/img_logo"
+        android:layout_marginTop="25dp"
+        android:gravity="center"
+        android:text="蜂"
+        android:textColor="@android:color/white"
+        android:textSize="50dp" />
+
+    <TextView
+        android:id="@+id/c2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/c1"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:text="觉"
+        android:textColor="@android:color/white"
+        android:textSize="50dp" />
+
+    <TextView
+        android:id="@+id/tv_version"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:text="版本号:1.0.0"
+        android:textColor="@android:color/white" />
+
+
+</RelativeLayout>
