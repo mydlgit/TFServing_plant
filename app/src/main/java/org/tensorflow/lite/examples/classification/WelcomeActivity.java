@@ -9,7 +9,7 @@ import android.os.Handler;
 import android.widget.TextView;
 
 public class WelcomeActivity extends AppCompatActivity {
-    private final int WEICOME_DISPLAY_LENGHT = 2000; // 两秒后进入系统
+    private final int WELCOME_DISPLAY_LENGTH = 2000; // 两秒后进入系统
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +27,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 WelcomeActivity.this.startActivity(intent);
                 WelcomeActivity.this.finish();
             }
-        },WEICOME_DISPLAY_LENGHT);
+        },WELCOME_DISPLAY_LENGTH);
 
     }
 }
