@@ -8,8 +8,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.widget.TextView;
 
-public class WelcomeActivity extends AppCompatActivity {
-    private final int WELCOME_DISPLAY_MS = 2000; // 两秒后进入系统
+public class WelcomActivity extends AppCompatActivity {
+    private final int WEICOME_DISPLAY_LENGHT = 2000; // 两秒后进入系统
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,11 +23,11 @@ public class WelcomeActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
-                WelcomeActivity.this.startActivity(intent);
-                WelcomeActivity.this.finish();
+                Intent intent = new Intent(WelcomActivity.this, MainActivity.class);
+                WelcomActivity.this.startActivity(intent);
+                WelcomActivity.this.finish();
             }
-        }, WELCOME_DISPLAY_MS);
+        },WEICOME_DISPLAY_LENGHT);
 
     }
 }
