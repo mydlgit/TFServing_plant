@@ -28,7 +28,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".tflite.a" /> <!-- screenOrientation:portrait,强制竖屏显示 -->
         <activity
-            android:name=".WelcomActivity"
+            android:name=".WelcomeActivity"
             android:label="@string/activity_name_classification"
             android:screenOrientation="portrait">
             <intent-filter>

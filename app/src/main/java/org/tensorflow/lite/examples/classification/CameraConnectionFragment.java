@@ -62,6 +62,7 @@ import java.util.concurrent.TimeUnit;
 import org.tensorflow.lite.examples.classification.customview.AutoFitTextureView;
 import org.tensorflow.lite.examples.classification.env.Logger;
 
+@SuppressLint("ValidFragment")
 public class CameraConnectionFragment extends Fragment {
 
   private static final Logger LOGGER = new Logger();
@@ -265,12 +266,7 @@ public class CameraConnectionFragment extends Fragment {
     final Activity activity = getActivity();
     if (activity != null) {
       activity.runOnUiThread(
-          new Runnable() {
-            @Override
-            public void run() {
-              Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
-            }
-          });
+              () -> Toast.makeText(activity, text, Toast.LENGTH_SHORT).show());
     }
   }
 
@@ -568,12 +564,7 @@ public class CameraConnectionFragment extends Fragment {
           .setMessage(getArguments().getString(ARG_MESSAGE))
           .setPositiveButton(
               android.R.string.ok,
-              new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(final DialogInterface dialogInterface, final int i) {
-                  activity.finish();
-                }
-              })
+                  (dialogInterface, i) -> activity.finish())
           .create();
     }
   }

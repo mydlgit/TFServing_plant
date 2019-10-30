@@ -17,7 +17,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ViewPager mViewPager;
     private CardPagerAdapter cardPagerAdapter;
     private ShadowTransformer shadowTransformer;
-    private LoopPageTransformer transformer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

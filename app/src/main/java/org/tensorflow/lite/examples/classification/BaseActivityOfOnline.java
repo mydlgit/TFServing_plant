@@ -51,6 +51,4 @@ public class BaseActivityOfOnline extends AppCompatActivity {
             return 0;
         }
     }
-
-
 }

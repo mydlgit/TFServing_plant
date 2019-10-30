@@ -35,6 +35,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Trace;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.annotation.UiThread;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import androidx.appcompat.app.AppCompatActivity;
@@ -54,6 +55,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.Objects;
+
 import org.tensorflow.lite.examples.classification.env.ImageUtils;
 import org.tensorflow.lite.examples.classification.env.Logger;
 import org.tensorflow.lite.examples.classification.tflite.Classifier.Device;
@@ -81,7 +84,6 @@ public abstract class CameraActivity extends AppCompatActivity
   private int yRowStride;
   private Runnable postInferenceCallback;
   private Runnable imageConverter;
-  private LinearLayout bottomSheetLayout;
   private LinearLayout gestureLayout;
   private BottomSheetBehavior sheetBehavior;
   protected TextView recognitionTextView,
@@ -105,6 +107,7 @@ public abstract class CameraActivity extends AppCompatActivity
   private Device device = Device.CPU;
   private int numThreads = -1;
 
+  @RequiresApi(api = Build.VERSION_CODES.M)
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
     LOGGER.d("onCreate " + this);
@@ -115,7 +118,7 @@ public abstract class CameraActivity extends AppCompatActivity
     setContentView(R.layout.activity_camera);
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar); //传入toolbar实例，使得toolbar的外观与功能和actionbar一致，但具备实现material design效果
-    getSupportActionBar().setDisplayShowTitleEnabled(false);
+    Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
     //获取相机权限
     if (hasPermission()) {
@@ -129,7 +132,7 @@ public abstract class CameraActivity extends AppCompatActivity
     minusImageView = findViewById(R.id.minus);
     modelSpinner = findViewById(R.id.model_spinner);
     deviceSpinner = findViewById(R.id.device_spinner);
-    bottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
+    LinearLayout bottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
     gestureLayout = findViewById(R.id.gesture_layout); //属于线性布局，位于bottomSheetLayout上，显示了预测结果
     sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout); //获取与bottomSheetLayout相关联的BottomSheetBehavior
     bottomSheetArrowImageView = findViewById(R.id.bottom_sheet_arrow); //箭头标示
@@ -140,11 +143,7 @@ public abstract class CameraActivity extends AppCompatActivity
           @Override
           public void onGlobalLayout() {
             //移除onGlobalLayoutListener,这样当视图树布局变化时不会再受到通知
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-              gestureLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-            } else {
-              gestureLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            }
+            gestureLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             //                int width = bottomSheetLayout.getMeasuredWidth();
             int height = gestureLayout.getMeasuredHeight();
 
@@ -161,20 +160,20 @@ public abstract class CameraActivity extends AppCompatActivity
             switch (newState) {
               case BottomSheetBehavior.STATE_HIDDEN:
                 break;
-              case BottomSheetBehavior.STATE_EXPANDED:
-                {//当bottom sheet上滑完毕时，将上滑箭头变为下拉箭头
-                  bottomSheetArrowImageView.setImageResource(R.drawable.icn_chevron_down);
-                }
-                break;
-              case BottomSheetBehavior.STATE_COLLAPSED:
-                {//当bottom sheet下拉完毕时，将下拉箭头变为上滑箭头
-                  bottomSheetArrowImageView.setImageResource(R.drawable.icn_chevron_up);
-                }
-                break;
+              case BottomSheetBehavior.STATE_EXPANDED: {//当bottom sheet上滑完毕时，将上滑箭头变为下拉箭头
+                bottomSheetArrowImageView.setImageResource(R.drawable.icn_chevron_down);
+              }
+              break;
+              case BottomSheetBehavior.STATE_COLLAPSED: {//当bottom sheet下拉完毕时，将下拉箭头变为上滑箭头
+                bottomSheetArrowImageView.setImageResource(R.drawable.icn_chevron_up);
+              }
+              break;
               case BottomSheetBehavior.STATE_DRAGGING:
                 break;
               case BottomSheetBehavior.STATE_SETTLING:
                 bottomSheetArrowImageView.setImageResource(R.drawable.icn_chevron_up);
+                break;
+              case BottomSheetBehavior.STATE_HALF_EXPANDED:
                 break;
             }
           }
@@ -250,21 +249,15 @@ public abstract class CameraActivity extends AppCompatActivity
     yRowStride = previewWidth;
 
     imageConverter =
-        new Runnable() {
-          @Override
-          public void run() {//camera获取的图片格式是yuv格式，这里转换为ARGB格式
-            ImageUtils.convertYUV420SPToARGB8888(bytes, previewWidth, previewHeight, rgbBytes);
-          }
-        };
+            () -> {//camera获取的图片格式是yuv格式，这里转换为ARGB格式
+              ImageUtils.convertYUV420SPToARGB8888(bytes, previewWidth, previewHeight, rgbBytes);
+            };
 
     postInferenceCallback =
-        new Runnable() {
-          @Override
-          public void run() {
-            camera.addCallbackBuffer(bytes);
-            isProcessingFrame = false;
-          }
-        };
+            () -> {
+              camera.addCallbackBuffer(bytes);
+              isProcessingFrame = false;
+            };
     processImage();
   }
 
@@ -298,10 +291,7 @@ public abstract class CameraActivity extends AppCompatActivity
       final int uvPixelStride = planes[1].getPixelStride();
 
       imageConverter =
-          new Runnable() {
-            @Override
-            public void run() {
-              ImageUtils.convertYUV420ToARGB8888(
+              () -> ImageUtils.convertYUV420ToARGB8888(
                   yuvBytes[0],
                   yuvBytes[1],
                   yuvBytes[2],
@@ -311,17 +301,12 @@ public abstract class CameraActivity extends AppCompatActivity
                   uvRowStride,
                   uvPixelStride,
                   rgbBytes);
-            }
-          };
 
       postInferenceCallback =
-          new Runnable() {
-            @Override
-            public void run() {
-              image.close();
-              isProcessingFrame = false;
-            }
-          };
+              () -> {
+                image.close();
+                isProcessingFrame = false;
+              };
 
       processImage();
     } catch (final Exception e) {
@@ -382,6 +367,7 @@ public abstract class CameraActivity extends AppCompatActivity
     }
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.M)
   @Override
   public void onRequestPermissionsResult(//在调用requestPermissions （在自定义的requestPermission方法中）后，系统会自动调用onRequestPermissionsResult
       final int requestCode, final String[] permissions, final int[] grantResults) {
@@ -445,6 +431,7 @@ public abstract class CameraActivity extends AppCompatActivity
    * CameraCharacteristics.LENS_FACING 相加相对于设备屏幕的方向
    * @return
    */
+  @RequiresApi(api = Build.VERSION_CODES.M)
   private String chooseCamera() {
     final CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
     try {//每次for循环。都会新建一个final对象，因此这里可以；若final对象在for循环外定义，则会报错
@@ -483,6 +470,7 @@ public abstract class CameraActivity extends AppCompatActivity
     return null;
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.M)
   protected void setFragment() {
     String cameraId = chooseCamera();
 

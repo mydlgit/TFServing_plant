@@ -47,8 +47,6 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
   private Integer sensorOrientation;
   private Classifier classifier;
   private Matrix frameToCropTransform;
-  private Matrix cropToFrameTransform;
-  private BorderedText borderedText;
 
   @Override
   protected int getLayoutId() {
@@ -71,7 +69,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
         TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, getResources().getDisplayMetrics());
 
-    borderedText = new BorderedText(textSizePx);
+    BorderedText borderedText = new BorderedText(textSizePx);
     borderedText.setTypeface(Typeface.MONOSPACE); //设置字体，monospace等宽字体
 
     // 构造分类器
@@ -104,7 +102,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
             sensorOrientation,
             MAINTAIN_ASPECT);
 
-    cropToFrameTransform = new Matrix();
+    Matrix cropToFrameTransform = new Matrix();
     frameToCropTransform.invert(cropToFrameTransform);
   }
 
@@ -116,32 +114,26 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     canvas.drawBitmap(rgbFrameBitmap, frameToCropTransform, null);
 
     runInBackground(
-        new Runnable() {
-          @Override
-          public void run() {
-            if (classifier != null) {
-              final long startTime = SystemClock.uptimeMillis();
-              final List<Classifier.Recognition> results = classifier.recognizeImage(croppedBitmap);
-              lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
-              LOGGER.v("Detect: %s", results);
-              cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
+            () -> {
+              if (classifier != null) {
+                final long startTime = SystemClock.uptimeMillis();
+                final List<Classifier.Recognition> results = classifier.recognizeImage(croppedBitmap);
+                lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
+                LOGGER.v("Detect: %s", results);
+                cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
 
-              runOnUiThread(
-                  new Runnable() {
-                    @Override
-                    public void run() {
-                      showResultsInBottomSheet(results);
-                      showFrameInfo(previewWidth + "x" + previewHeight);
-                      showCropInfo(cropCopyBitmap.getWidth() + "x" + cropCopyBitmap.getHeight());
-                      showCameraResolution(canvas.getWidth() + "x" + canvas.getHeight());
-                      showRotationInfo(String.valueOf(sensorOrientation));
-                      showInference(lastProcessingTimeMs + "ms");
-                    }
-                  });
-            }
-            readyForNextImage();
-          }
-        });
+                runOnUiThread(
+                        () -> {
+                          showResultsInBottomSheet(results);
+                          showFrameInfo(previewWidth + "x" + previewHeight);
+                          showCropInfo(cropCopyBitmap.getWidth() + "x" + cropCopyBitmap.getHeight());
+                          showCameraResolution(canvas.getWidth() + "x" + canvas.getHeight());
+                          showRotationInfo(String.valueOf(sensorOrientation));
+                          showInference(lastProcessingTimeMs + "ms");
+                        });
+              }
+              readyForNextImage();
+            });
   }
 
   @Override
@@ -165,10 +157,8 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     if (device == Device.GPU && model == Model.QUANTIZED) {
       LOGGER.d("Not creating classifier: GPU doesn't support quantized models.");
       runOnUiThread(
-          () -> {
-            Toast.makeText(this, "GPU does not yet supported quantized models.", Toast.LENGTH_LONG)
-                .show();
-          });
+          () -> Toast.makeText(this, "GPU does not yet supported quantized models.", Toast.LENGTH_LONG)
+              .show());
       return;
     }
     try {
