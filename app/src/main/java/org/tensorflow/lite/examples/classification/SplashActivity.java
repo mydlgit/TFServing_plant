@@ -26,6 +26,7 @@ public class SplashActivity extends AppCompatActivity {
             boolean isFirst = isFirstRun();
             if (!isFirst) {
                 // 如果是第一次启动，则先进入功能引导页
+                //TODO: QuickGuideActivity
                 Intent intent = new Intent(SplashActivity.this, QuickGuideActivity.class);
                 startActivity(intent);
                 finish();
