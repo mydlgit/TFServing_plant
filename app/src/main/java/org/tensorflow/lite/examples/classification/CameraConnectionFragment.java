@@ -91,7 +91,7 @@ public class CameraConnectionFragment extends Fragment {
   private final OnImageAvailableListener imageListener;
   /** The input size in pixels desired by TensorFlow (width and height of a square bitmap). */
   private final Size inputSize;
-  /** The layout identifier to inflate for this Fragment. */
+  /** The activity_guide identifier to inflate for this Fragment. */
   private final int layout;
 
   private final ConnectionCallback cameraConnectionCallback;
