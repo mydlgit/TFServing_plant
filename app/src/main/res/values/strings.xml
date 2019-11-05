@@ -29,5 +29,6 @@
     <string name="title_4">使用说明 第四项</string>
 
     <string name="text_1">Lorem ipsum dolor sit amet, consectetur adipiscing elit.  Etiam eget ligula eu lectus lobortis condimentum.</string>
+    <string name="guide_btn_str">to main-activity</string>
 
 </resources>

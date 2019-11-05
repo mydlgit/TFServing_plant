@@ -41,7 +41,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private boolean isFirstRun(){
         SharedPreferences sps =  getSharedPreferences("FirstRun", Context.MODE_PRIVATE);
-        boolean isFirst = sps.getBoolean("isFirst", false);
+        boolean isFirst = sps.getBoolean("isFirst", true);
         if (isFirst){
             SharedPreferences.Editor editor = sps.edit();
             editor.putBoolean("isFirst", false);
