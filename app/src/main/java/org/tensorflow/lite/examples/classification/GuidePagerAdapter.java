@@ -32,7 +32,6 @@ public class GuidePagerAdapter extends PagerAdapter {
                 btn_start.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(context, "welcome to BeeInsight", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(context, MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         context.startActivity(intent);
